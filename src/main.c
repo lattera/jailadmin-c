@@ -7,16 +7,29 @@
 #include "misc.h"
 #include "linkedlist.h"
 #include "sql.h"
+#include "ini.h"
 
 int main(int argc, char *argv[])
 {
-    SQL_CTX *ctx;
-    LINKEDLIST *list;
+    INI *ini;
+    SECTION *section;
+    LISTNODE *setting;
 
-    list = xmalloc(sizeof(LIST));
-    AddNode(list, "test 1", "data for test 1", strlen("data for test 1"));
-    AddNode(list, "test 2", "data for test 2", strlen("data for test 2"));
-    FreeList(list);
+    ini = parse_ini(argv[1]);
+    if (!(ini)) {
+        fprintf(stderr, "[-] ini is null!\n");
+        return 0;
+    }
+
+    for (section = ini->sections; section != NULL; section = section->next) {
+        fprintf(stderr, "Section: %s\n", section->name);
+
+        if ((section->settings)) {
+            for (setting = section->settings->head; setting != NULL; setting = setting->next) {
+                fprintf(stderr, "%s=%s\n", setting->name, setting->data);
+            }
+        }
+    }
 
     return 0;
 }
