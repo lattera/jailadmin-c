@@ -78,11 +78,14 @@ LISTNODE *parse_setting(SECTION *section, char *buf)
     if (*p1 == 0x00)
         return NULL;
 
-    while (isspace(*(--p2)))
+    while (p2 > buf && isspace(*(--p2)))
         *p2=0x00;
 
     while (isspace(*buf))
         buf++;
+
+    if (p2 < buf || *buf == 0x00 || *p1 == 0x00)
+        return NULL;
 
     return add_setting(section, buf, p1);
 }
