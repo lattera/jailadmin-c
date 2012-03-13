@@ -22,11 +22,11 @@ int main(int argc, char *argv[])
     }
 
     for (section = ini->sections; section != NULL; section = section->next) {
-        fprintf(stderr, "Section: %s\n", section->name);
+        fprintf(stderr, "[%s]\n", section->name);
 
         if ((section->settings)) {
             for (setting = section->settings->head; setting != NULL; setting = setting->next) {
-                fprintf(stderr, "%s=%s\n", setting->name, setting->data);
+                fprintf(stderr, "    %s=%s\n", setting->name, setting->data);
             }
         }
     }

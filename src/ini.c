@@ -44,6 +44,9 @@ INI *parse_ini(char *filename)
                 section = add_section(ini, buf+1);
                 break;
             default:
+                if (!(section))
+                    goto error;
+
                 if (parse_setting(section, buf) == NULL)
                     goto error;
 
@@ -94,11 +97,14 @@ SECTION *add_section(INI *ini, char *name)
             if (!strcmp(section->name, name))
                 return section;
 
-            section->next = xmalloc(sizeof(SECTION));
-            if (!(section->next))
-                return NULL;
             section = section->next;
         }
+        
+        section->next = xmalloc(sizeof(SECTION));
+        if (!(section->next))
+            return NULL;
+
+        section = section->next;
     }
 
     section->name = strdup(name);
