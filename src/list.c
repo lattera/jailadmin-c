@@ -41,6 +41,17 @@ LISTNODE *AddNode(LINKEDLIST *list, char *name, void *data, unsigned long sz)
 	return node;
 }
 
+void _free_node(LISTNODE *node)
+{
+    if ((node->name))
+        free(node->name);
+
+    if ((node->data))
+        free(node->data);
+
+    free(node);
+}
+
 void DeleteNode(LINKEDLIST *list, LISTNODE *node)
 {
 	LISTNODE *del;
@@ -48,19 +59,10 @@ void DeleteNode(LINKEDLIST *list, LISTNODE *node)
 	if (!(list))
 		return;
 
-    if ((node->name))
-        fprintf(stderr, "[*] Deleting node %s\n", node->name);
-
 	if (node == list->head) {
 		list->head = node->next;
 
-        if ((node->name))
-            free(node->name);
-
-        if ((node->data))
-    		free(node->data);
-
-		free(node);
+        _free_node(node);
 
 		return;
 	}
@@ -77,13 +79,7 @@ void DeleteNode(LINKEDLIST *list, LISTNODE *node)
 
 	del->next = del->next->next;
 	
-    if ((node->name))
-        free(node->name);
-
-    if ((node->data))
-    	free(node->data);
-
-	free(node);
+    _free_node(node);
 }
 
 LISTNODE *FindNodeByRef(LINKEDLIST *list, void *data)
@@ -142,21 +138,22 @@ LISTNODE *FindNodeByName(LINKEDLIST *list, char *name)
 }
 
 /*frees all nodes in a list, including their data*/
-void FreeNodes(LINKEDLIST *list, int FreeParameterAsWell)
+void FreeNodes(LINKEDLIST *list, bool free_list)
 {
-	if(!(list))
+	if (!(list))
 		return;
 
-	while((list->head))
+	while ((list->head))
         DeleteNode(list, list->head);
 
-	if(FreeParameterAsWell) free(list);
+	if (free_list)
+        free(list);
 	
 	return;
 }
 
 void FreeList(LINKEDLIST *list)
 {
-	FreeNodes(list, 0);
+	FreeNodes (list, true);
 	return;
 }

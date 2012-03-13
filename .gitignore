@@ -1,1 +1,3 @@
-*.o
+src/*
+!src/*.c
+!src/Makefile
