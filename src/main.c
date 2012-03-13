@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
         if ((section->settings)) {
             for (setting = section->settings->head; setting != NULL; setting = setting->next) {
-                fprintf(stderr, "    %s=%s\n", setting->name, setting->data);
+                fprintf(stderr, "    \"%s\"=\"%s\"\n", setting->name, setting->data);
             }
         }
     }

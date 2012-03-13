@@ -63,6 +63,10 @@ LISTNODE *parse_setting(SECTION *section, char *buf)
 {
     char *p1, *p2;
 
+    p1 = buf+(strlen(buf)-1);
+    while (isspace(*p1))
+        *(p1--) = 0x00;
+
     p1 = p2 = strchr(buf, '=');
     if (!(p1))
         return NULL;

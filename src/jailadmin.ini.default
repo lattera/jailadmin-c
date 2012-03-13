@@ -1,6 +1,6 @@
 [db]
-host=localhost
-user=jailadmin
+host=localhost   
+user=jailadmin  
 password=j41l4dm1n
 db=jails
 
