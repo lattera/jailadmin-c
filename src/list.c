@@ -4,9 +4,9 @@
 #include <unistd.h>
 
 #include "jailadmin.h"
-#include "list.h"
+#include "linkedlist.h"
 
-LISTNODE *AddNode(LIST *list, char *name, void *data, unsigned long sz)
+LISTNODE *AddNode(LINKEDLIST *list, char *name, void *data, unsigned long sz)
 {
 	LISTNODE *node;
 
@@ -41,17 +41,25 @@ LISTNODE *AddNode(LIST *list, char *name, void *data, unsigned long sz)
 	return node;
 }
 
-void DeleteNode(LIST *list, LISTNODE *node)
+void DeleteNode(LINKEDLIST *list, LISTNODE *node)
 {
 	LISTNODE *del;
 
 	if (!(list))
 		return;
 
+    if ((node->name))
+        fprintf(stderr, "[*] Deleting node %s\n", node->name);
+
 	if (node == list->head) {
 		list->head = node->next;
 
-		free(node->data);
+        if ((node->name))
+            free(node->name);
+
+        if ((node->data))
+    		free(node->data);
+
 		free(node);
 
 		return;
@@ -69,11 +77,16 @@ void DeleteNode(LIST *list, LISTNODE *node)
 
 	del->next = del->next->next;
 	
-	free(node->data);
+    if ((node->name))
+        free(node->name);
+
+    if ((node->data))
+    	free(node->data);
+
 	free(node);
 }
 
-LISTNODE *FindNodeByRef(LIST *list, void *data)
+LISTNODE *FindNodeByRef(LINKEDLIST *list, void *data)
 {
 	LISTNODE *node;
 
@@ -91,7 +104,7 @@ LISTNODE *FindNodeByRef(LIST *list, void *data)
 	return NULL;
 }
 
-LISTNODE *FindNodeByValue(LIST *list, void *data, unsigned long sz)
+LISTNODE *FindNodeByValue(LINKEDLIST *list, void *data, unsigned long sz)
 {
 	LISTNODE *node;
 
@@ -109,7 +122,7 @@ LISTNODE *FindNodeByValue(LIST *list, void *data, unsigned long sz)
 	return NULL;
 }
 
-LISTNODE *FindNodeByName(LIST *list, char *name)
+LISTNODE *FindNodeByName(LINKEDLIST *list, char *name)
 {
     LISTNODE *node;
 
@@ -129,24 +142,20 @@ LISTNODE *FindNodeByName(LIST *list, char *name)
 }
 
 /*frees all nodes in a list, including their data*/
-void FreeNodes(LIST *list, int FreeParameterAsWell)
+void FreeNodes(LINKEDLIST *list, int FreeParameterAsWell)
 {
-	LISTNODE *node, *previous;
 	if(!(list))
 		return;
-	node = list->head;
-	while(node){
-		free(node->data);
-		previous = node;
-		node = node->next;
-		free(previous);
-	}
+
+	while((list->head))
+        DeleteNode(list, list->head);
+
 	if(FreeParameterAsWell) free(list);
 	
 	return;
 }
 
-void FreeList(LIST *list)
+void FreeList(LINKEDLIST *list)
 {
 	FreeNodes(list, 0);
 	return;
