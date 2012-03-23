@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "jailadmin.h"
 #include "list.h"
 
 LISTNODE *AddNode(LIST *list, char *name, void *data, unsigned long sz)

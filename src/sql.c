@@ -4,10 +4,11 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "jailadmin.h"
 #include "sql.h"
 #include "misc.h"
 
-SQL_CTX init_sql(char *host, char *user, char *password, char *db)
+SQL_CTX *init_sql(char *host, char *user, char *password, char *db)
 {
     SQL_CTX *ctx;
 
@@ -35,7 +36,7 @@ SQL_CTX init_sql(char *host, char *user, char *password, char *db)
 
 void close_sql(SQL_CTX *ctx, bool free_ctx, bool end)
 {
-    mysql_close(ctx);
+    mysql_close(ctx->db);
     if (free_ctx) {
         if ((ctx->db))
             free(ctx->db);
