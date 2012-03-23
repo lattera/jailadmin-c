@@ -1,0 +1,8 @@
+jailadmin-c
+===========
+This project is to help make administration of FreeBSD jails easier. It's written in C.
+
+Requirements
+============
+* MySQL
+* CLang
