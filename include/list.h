@@ -2,6 +2,7 @@
 #define _LIST_H
 
 typedef struct _listnode {
+    char *name;
 	void *data;
 	unsigned long sz;
 
@@ -13,10 +14,11 @@ typedef struct _list {
 	LISTNODE *tail;
 } LIST;
 
-LISTNODE *AddNode(LIST *, void *, unsigned long);
+LISTNODE *AddNode(LIST *, char *, void *, unsigned long);
 void DeleteNode(LIST *, LISTNODE *);
 LISTNODE *FindNodeByRef(LIST *, void *);
 LISTNODE *FindNodeByValue(LIST *, void *, unsigned long);
+LISTNODE *FindNodeByName(LIST *, char *);
 void FreeNodes(LIST *, int);
 void FreeList(LIST *);
 

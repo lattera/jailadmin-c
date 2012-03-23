@@ -28,6 +28,8 @@ typedef struct _sql_ctx {
 	MYSQL *db;
 } SQL_CTX;
 
+SQL_CTX *init_sql(char *, char *, char *, char *);
+void close_sql(SQL_CTX *, bool, bool);
 SQL_ROW *sql_backend_mysql(SQL_CTX *, char *);
 SQL_ROW *runsql(SQL_CTX *, char *);
 SQL_ROW *sqlfmt(SQL_CTX *, char *, size_t, char *, ...);

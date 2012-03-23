@@ -5,7 +5,7 @@
 
 #include "list.h"
 
-LISTNODE *AddNode(LIST *list, void *data, unsigned long sz)
+LISTNODE *AddNode(LIST *list, char *name, void *data, unsigned long sz)
 {
 	LISTNODE *node;
 
@@ -27,6 +27,11 @@ LISTNODE *AddNode(LIST *list, void *data, unsigned long sz)
 	}
 	memset(node, 0x00, sizeof(LISTNODE));
 
+    /* Yeah, small memory leak here */
+    if ((name))
+        if (!(node->name = strdup(name)))
+            return NULL;
+    
 	node->data = malloc(sz);
 	memset(node->data, 0x00, sz);
 	node->sz = sz;
@@ -101,6 +106,25 @@ LISTNODE *FindNodeByValue(LIST *list, void *data, unsigned long sz)
 	}
 
 	return NULL;
+}
+
+LISTNODE *FindNodeByName(LIST *list, char *name)
+{
+    LISTNODE *node;
+
+    if (!(list))
+        return NULL;
+
+    node = list->head;
+    while ((node)) {
+        if ((node->name))
+            if (!strcmp(node->name, name))
+                return node;
+
+        node = node->next;
+    }
+
+    return NULL;
 }
 
 /*frees all nodes in a list, including their data*/
