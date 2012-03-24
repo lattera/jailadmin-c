@@ -17,6 +17,38 @@
     ", route VARCHAR(45)" \
     ");"
 
+#define BRIDGES_SCHEMA "CREATE TABLE %sjailadmin_bridges ( name VARCHAR(100) NOT NULL" \
+    ", device VARCHAR(20) NOT NULL" \
+    ", ip VARCHAR(45)" \
+    ");"
+
+#define BRIDGE_PHYSICALS_SCHEMA "CREATE TABLE %sjailadmin_bridge_physicals ( bridge VARCHAR(100) NOT NULL" \
+    ", device VARCHAR(20) NOT NULL" \
+    ");"
+
+#define SERVICES_SCHEMA "CREATE TABLE %sjailadmin_services ( id INT NOT NULL AUTO_INCREMENT PRIMARY KEY" \
+    ", path VARCHAR(500) NOT NULL" \
+    ", jail VARCHAR(100) NOT NULL" \
+    ");"
+
+#define EPAIRS_SCHEMA "CREATE TABLE %sjailadmin_epairs ( device VARCHAR(20) NOT NULL" \
+    ", jail VARCHAR(100) NOT NULL" \
+    ", bridge VARCHAR(100) NOT NULL" \
+    ", ip VARCHAR(45) NOT NULL" \
+    ");"
+
+#define TEMPLATES_SCHEMA "CREATE TABLE %sjailadmin_templates ( name VARCHAR(100) NOT NULL" \
+    ", snapshot VARCHAR(500) NOT NULL" \
+    ");"
+
+#define MOUNTS_SCHEMA "CREATE TABLE %sjailadmin_mounts ( id INT NOT NULL AUTO_INCREMENT PRIMARY KEY" \
+    ", jail VARCHAR(100) NOT NULL" \
+    ", target VARCHAR(500) NOT NULL" \
+    ", source VARCHAR(500) NOT NULL" \
+    ", driver VARCHAR(50)" \
+    ", options VARCHAR(200)" \
+    ");"
+
 bool is_schema_installed(INI *ini, SQL_CTX *ctx)
 {
     char buf[BUFSZ+1];
@@ -47,6 +79,12 @@ int install_schema(INI *ini, SQL_CTX *ctx)
         prefix = "";
 
     sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, JAIL_SCHEMA, prefix));
+    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, BRIDGES_SCHEMA, prefix));
+    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, BRIDGE_PHYSICALS_SCHEMA, prefix));
+    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, SERVICES_SCHEMA, prefix));
+    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, EPAIRS_SCHEMA, prefix));
+    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, TEMPLATES_SCHEMA, prefix));
+    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, MOUNTS_SCHEMA, prefix));
 
     return 0;
 }
