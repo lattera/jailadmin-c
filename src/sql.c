@@ -36,7 +36,12 @@ SQL_CTX *init_sql(char *host, char *user, char *password, char *db)
 
 void close_sql(SQL_CTX *ctx, bool free_ctx, bool end)
 {
-    mysql_close(ctx->db);
+    if (!(ctx))
+        return;
+
+    if ((ctx->db))
+        mysql_close(ctx->db);
+
     if (free_ctx) {
         if ((ctx->db))
             free(ctx->db);

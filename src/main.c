@@ -9,20 +9,52 @@
 #include "sql.h"
 #include "ini.h"
 
+void usage(char *name)
+{
+    fprintf(stderr, "USAGE: %s [ini]\n", name);
+    fprintf(stderr, "Environment variables that can be set:\n");
+    fprintf(stderr, "JAILADMIN_CONFIG\t- INI file for config.\n");
+    fprintf(stderr, "    If set, do not pass file name as an argument to the program\n");
+    exit(1);
+}
+
+char *getvar(char *envname, int argc, char *argv[], int argi)
+{
+    char *p;
+
+    p = getenv(envname);
+    if ((p))
+        return p;
+
+    if (argc <= argi)
+        usage(argv[0]);
+
+    return argv[argi];
+}
+
 int main(int argc, char *argv[])
 {
     INI *ini;
-    SECTION *section;
-    LISTNODE *setting;
+    char *inifile;
+    SQL_CTX *sql_ctx;
+    SECTION *db_section;
 
-    ini = parse_ini(argv[1]);
+    inifile = getvar("JAILADMIN_CONFIG", argc, argv, 1);
+
+    ini = parse_ini(inifile);
     if (!(ini)) {
         fprintf(stderr, "[-] ini is null!\n");
         return 0;
     }
 
-    printf("%s\n", get_section_var(get_section(ini, "db"), "user"));
+    db_section = get_section(ini, "db");
+    sql_ctx = init_sql(get_section_var(db_section, "host"),
+                       get_section_var(db_section, "user"),
+                       get_section_var(db_section, "password"),
+                       get_section_var(db_section, "db")
+              );
 
+    close_sql(sql_ctx, true, true);
     free_ini(ini);
 
     return 0;
