@@ -8,6 +8,7 @@
 #include "linkedlist.h"
 #include "sql.h"
 #include "ini.h"
+#include "schema.h"
 
 void usage(char *name)
 {
@@ -53,6 +54,8 @@ int main(int argc, char *argv[])
                        get_section_var(db_section, "password"),
                        get_section_var(db_section, "db")
               );
+
+    install_schema(ini, sql_ctx);
 
     close_sql(sql_ctx, true, true);
     free_ini(ini);
