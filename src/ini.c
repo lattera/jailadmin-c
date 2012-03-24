@@ -127,3 +127,38 @@ LISTNODE *add_setting(SECTION *section, char *name, char *value)
 
     return AddNode(section->settings, name, strdup(value), strlen(value));
 }
+
+SECTION *get_section(INI *ini, char *name)
+{
+    SECTION *section;
+
+    for (section = ini->sections; section != NULL; section = section->next)
+        if (!strcmp(section->name, name))
+            return section;
+
+    return NULL;
+}
+
+char *get_section_var(SECTION *section, char *name)
+{
+    LISTNODE *node;
+
+    for (node = section->settings->head; node != NULL; node = node->next)
+        if (!strcmp(node->name, name))
+            return node->data;
+
+    return NULL;
+}
+
+void free_ini(INI *ini)
+{
+    SECTION *section, *prev;
+
+    section = ini->sections;
+    while ((section)) {
+        prev = section;
+        FreeList(section->settings);
+        section = section->next;
+        free(prev);
+    }
+}

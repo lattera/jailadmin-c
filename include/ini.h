@@ -17,7 +17,7 @@ SECTION *add_section(INI *, char *);
 LISTNODE *parse_setting(SECTION *, char *);
 LISTNODE *add_setting(SECTION *, char *, char *);
 SECTION *get_section(INI *, char *);
-char *get_section_var(LINKEDLIST *, char *);
+char *get_section_var(SECTION *, char *);
 void free_ini(INI *);
 
 #endif

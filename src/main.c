@@ -21,15 +21,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    for (section = ini->sections; section != NULL; section = section->next) {
-        fprintf(stderr, "[%s]\n", section->name);
+    printf("%s\n", get_section_var(get_section(ini, "db"), "user"));
 
-        if ((section->settings)) {
-            for (setting = section->settings->head; setting != NULL; setting = setting->next) {
-                fprintf(stderr, "    \"%s\"=\"%s\"\n", setting->name, setting->data);
-            }
-        }
-    }
+    free_ini(ini);
 
     return 0;
 }
