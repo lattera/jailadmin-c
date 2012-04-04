@@ -4,11 +4,6 @@
 #include <unistd.h>
 
 #include "jailadmin.h"
-#include "misc.h"
-#include "linkedlist.h"
-#include "sql.h"
-#include "ini.h"
-#include "schema.h"
 
 void usage(char *name)
 {
@@ -35,30 +30,34 @@ char *getvar(char *envname, int argc, char *argv[], int argi)
 
 int main(int argc, char *argv[])
 {
-    INI *ini;
+    JAILADMIN *admin;
     char *inifile;
-    SQL_CTX *sql_ctx;
-    SECTION *db_section;
+
+    admin = xmalloc(sizeof(JAILADMIN));
 
     inifile = getvar("JAILADMIN_CONFIG", argc, argv, 1);
 
-    ini = parse_ini(inifile);
-    if (!(ini)) {
+    admin->ini = parse_ini(inifile);
+    if (!(admin->ini)) {
         fprintf(stderr, "[-] ini is null!\n");
         return 0;
     }
 
-    db_section = get_section(ini, "db");
-    sql_ctx = init_sql(get_section_var(db_section, "host"),
-                       get_section_var(db_section, "user"),
-                       get_section_var(db_section, "password"),
-                       get_section_var(db_section, "db")
-              );
+    admin->db = get_section(admin->ini, "db");
+    admin->ctx = init_sql(get_section_var(admin->db, "host"),
+                       get_section_var(admin->db, "user"),
+                       get_section_var(admin->db, "password"),
+                       get_section_var(admin->db, "db")
+                 );
 
-    install_schema(ini, sql_ctx);
+    admin->prefix = get_section_var(admin->db, "prefix");
+    if (!(admin->prefix))
+        admin->prefix = "";
 
-    close_sql(sql_ctx, true, true);
-    free_ini(ini);
+    install_schema(admin);
+
+    close_sql(admin->ctx, true, true);
+    free_ini(admin->ini);
 
     return 0;
 }

@@ -4,11 +4,6 @@
 #include <unistd.h>
 
 #include "jailadmin.h"
-#include "linkedlist.h"
-#include "ini.h"
-#include "misc.h"
-#include "sql.h"
-#include "schema.h"
 
 #define BUFSZ 256
 
@@ -49,14 +44,13 @@
     ", options VARCHAR(200)" \
     ");"
 
-bool is_schema_installed(INI *ini, SQL_CTX *ctx)
+bool is_schema_installed(JAILADMIN *admin)
 {
     char buf[BUFSZ+1];
     SQL_ROW *rows;
-    bool ret;
     int num;
 
-    rows = runsql(ctx, "SELECT COUNT(*) AS TableCount FROM information_schema.tables WHERE table_schema = 'jails' AND table_name = 'jailadmin_jails'");
+    rows = runsql(admin->ctx, "SELECT COUNT(*) AS TableCount FROM information_schema.tables WHERE table_schema = 'jails' AND table_name = 'jailadmin_jails'");
     sscanf(get_column(rows, "TableCount"), "%d", &num);
 
     sqldb_free_rows(rows);
@@ -64,27 +58,22 @@ bool is_schema_installed(INI *ini, SQL_CTX *ctx)
     return (num > 0) ? true : false;
 }
 
-int install_schema(INI *ini, SQL_CTX *ctx)
+int install_schema(JAILADMIN *admin)
 {
     char buf[BUFSZ+1];
     char *prefix;
     SECTION *db;
 
-    if (is_schema_installed(ini, ctx))
+    if (is_schema_installed(admin))
         return 0;
 
-    db = get_section(ini, "db");
-    prefix = get_section_var(db, "prefix");
-    if (!(prefix))
-        prefix = "";
-
-    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, JAIL_SCHEMA, prefix));
-    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, BRIDGES_SCHEMA, prefix));
-    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, BRIDGE_PHYSICALS_SCHEMA, prefix));
-    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, SERVICES_SCHEMA, prefix));
-    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, EPAIRS_SCHEMA, prefix));
-    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, TEMPLATES_SCHEMA, prefix));
-    sqldb_free_rows(sqlfmt(ctx, buf, BUFSZ, MOUNTS_SCHEMA, prefix));
+    sqldb_free_rows(sqlfmt(admin->ctx, buf, BUFSZ, JAIL_SCHEMA, admin->prefix));
+    sqldb_free_rows(sqlfmt(admin->ctx, buf, BUFSZ, BRIDGES_SCHEMA, admin->prefix));
+    sqldb_free_rows(sqlfmt(admin->ctx, buf, BUFSZ, BRIDGE_PHYSICALS_SCHEMA, admin->prefix));
+    sqldb_free_rows(sqlfmt(admin->ctx, buf, BUFSZ, SERVICES_SCHEMA, admin->prefix));
+    sqldb_free_rows(sqlfmt(admin->ctx, buf, BUFSZ, EPAIRS_SCHEMA, admin->prefix));
+    sqldb_free_rows(sqlfmt(admin->ctx, buf, BUFSZ, TEMPLATES_SCHEMA, admin->prefix));
+    sqldb_free_rows(sqlfmt(admin->ctx, buf, BUFSZ, MOUNTS_SCHEMA, admin->prefix));
 
     return 0;
 }
