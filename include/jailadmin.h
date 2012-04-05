@@ -17,5 +17,6 @@ typedef struct _jailadmin {
 
 #include "schema.h"
 #include "jailadmin_jail.h"
+#include "jailadmin_network.h"
 
 #endif

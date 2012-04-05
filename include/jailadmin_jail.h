@@ -11,8 +11,10 @@ typedef struct _jail {
 
     char **services;
 
-    struct _network *networks;
-    struct _mount *mounts;
+    struct _network_device **networks;
+    struct _mount **mounts;
 } JAIL;
+
+JAIL *get_jail(JAILADMIN *, char *);
 
 #endif
