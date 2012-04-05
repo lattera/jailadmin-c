@@ -23,5 +23,6 @@ bool bring_network_online(JAILADMIN *, NETWORK *);
 bool is_network_device_online(NETWORK_DEVICE *);
 bool bring_host_online(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
 bool bring_guest_online(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
+bool bring_guest_offline(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
 
 #endif

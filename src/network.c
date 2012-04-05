@@ -186,3 +186,20 @@ bool bring_guest_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
 
     return true;
 }
+
+bool bring_guest_offline(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
+{
+    char *sudo;
+    char buf[BUFSZ+1];
+
+    if (is_network_device_online(device) == false)
+        return true;
+
+    memset(buf, 0x00, sizeof(buf));
+    SUDO(sudo);
+
+    snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%sa' destroy", sudo, device->device);
+    system(buf);
+
+    return true;
+}

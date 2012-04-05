@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
 
     jail = get_jail(admin, "tmpjail");
     start_jail(admin, jail);
+    stop_jail(admin, jail);
 
     close_sql(admin->ctx, true, true);
     free_ini(admin->ini);

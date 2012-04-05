@@ -15,6 +15,7 @@ typedef struct _jailadmin {
     char *prefix;
 } JAILADMIN;
 
+#include "jailadmin_mount.h"
 #include "schema.h"
 #include "jailadmin_jail.h"
 #include "jailadmin_network.h"

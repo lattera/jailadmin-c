@@ -2,7 +2,6 @@
 #define _JAILADMIN_JAIL_H
 
 struct _network;
-struct _mount;
 
 typedef struct _jail {
     char *name;
@@ -13,12 +12,13 @@ typedef struct _jail {
     char **services;
 
     struct _network_device **networks;
-    struct _mount **mounts;
+    MOUNT **mounts;
 } JAIL;
 
 JAIL *get_jail(JAILADMIN *, char *);
 bool is_jail_online(JAIL *);
 void print_jail(JAIL *);
 bool start_jail(JAILADMIN *, JAIL *);
+bool stop_jail(JAILADMIN *, JAIL *);
 
 #endif

@@ -29,6 +29,7 @@ JAIL *get_jail(JAILADMIN *admin, char *name)
     jail->route = strdup(get_column(rows, "route"));
     jail->dataset = strdup(get_column(rows, "dataset"));
     jail->networks = get_devices(admin, jail);
+    jail->mounts = get_mounts(admin, jail);
 
     sqldb_free_rows(rows);
 
@@ -103,10 +104,50 @@ bool start_jail(JAILADMIN *admin, JAIL *jail)
         system(buf);
     }
 
+    for (i=0; jail->mounts[i] != NULL; i++) {
+        snprintf(buf, BUFSZ, "%s /sbin/mount ", sudo);
+        if (strlen(jail->mounts[i]->driver))
+            snprintf(buf+strlen(buf), BUFSZ-strlen(buf), "-t '%s' ", jail->mounts[i]->driver);
+        if (strlen(jail->mounts[i]->options))
+            snprintf(buf+strlen(buf), BUFSZ-strlen(buf), "-o %s ", jail->mounts[i]->options);
+
+        snprintf(buf+strlen(buf), BUFSZ-strlen(buf), "'%s' '%s/%s'", jail->mounts[i]->source, jail->path, jail->mounts[i]->target);
+        system(buf);
+    }
+
     for (i=0; jail->services[i] != NULL; i++) {
         snprintf(buf, BUFSZ, "%s /usr/sbin/jexec '%s' %s start", sudo, jail->name, jail->services[i]);
         system(buf);
     }
+
+    return true;
+}
+
+bool stop_jail(JAILADMIN *admin, JAIL *jail)
+{
+    char *sudo;
+    char buf[BUFSZ+1];
+    unsigned int i;
+
+    if (is_jail_online(jail) == false)
+        return true;
+
+    memset(buf, 0x00, BUFSZ);
+    SUDO(sudo);
+
+    snprintf(buf, BUFSZ, "%s /usr/sbin/jail -r '%s'", sudo, jail->name);
+    system(buf);
+
+    snprintf(buf, BUFSZ, "%s /sbin/umount '%s/dev'", sudo, jail->path);
+    system(buf);
+
+    for (i=0; jail->mounts[i] != NULL; i++) {
+        snprintf(buf, BUFSZ, "%s /sbin/umount -f '%s/%s'", sudo, jail->path, jail->mounts[i]->target);
+        system(buf);
+    }
+
+    for (i=0; jail->networks[i] != NULL; i++)
+        bring_guest_offline(admin, jail, jail->networks[i]);
 
     return true;
 }
