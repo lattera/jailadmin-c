@@ -9,25 +9,12 @@
 
 void usage(char *name)
 {
-    fprintf(stderr, "USAGE: %s [ini]\n", name);
+    fprintf(stderr, "USAGE: %s [-i <ini>] [-I]\n", name);
+    fprintf(stderr, "-I: Interactive mode\n\n");
     fprintf(stderr, "Environment variables that can be set:\n");
     fprintf(stderr, "JAILADMIN_CONFIG\t- INI file for config.\n");
     fprintf(stderr, "    If set, do not pass file name as an argument to the program\n");
     exit(1);
-}
-
-char *getvar(char *envname, int argc, char *argv[], int argi)
-{
-    char *p;
-
-    p = getenv(envname);
-    if ((p))
-        return p;
-
-    if (argc <= argi)
-        usage(argv[0]);
-
-    return argv[argi];
 }
 
 JAILADMIN *init_jailadmin(int argc, char *argv[])
@@ -35,10 +22,26 @@ JAILADMIN *init_jailadmin(int argc, char *argv[])
     JAILADMIN *admin;
     char *inifile;
     JAIL *jail;
+    int ch;
 
     admin = xmalloc(sizeof(JAILADMIN));
 
-    inifile = getvar("JAILADMIN_CONFIG", argc, argv, 1);
+    inifile = getenv("JAILADMIN_CONFIG");
+    while ((ch = getopt(argc, argv, "Ii:")) != -1) {
+        switch ((char)ch) {
+            case 'i':
+                inifile = optarg;
+                break;
+            case 'I':
+                admin->interactive = jatrue;
+                break;
+            default:
+                usage(argv[0]);
+        }
+    }
+
+    if (!(inifile))
+        usage(argv[0]);
 
     admin->ini = parse_ini(inifile);
     if (!(admin->ini)) {
@@ -70,11 +73,8 @@ int main(int argc, char *argv[])
     JAILADMIN *admin;
     admin = init_jailadmin(argc, argv);
 
-    initscr();
-
-    
-
-    endwin();
+    if (admin->interactive)
+        interactive(admin);
 
     close_sql(admin->ctx, jatrue, jatrue);
     free_ini(admin->ini);

@@ -13,12 +13,15 @@ typedef struct _jailadmin {
     INI *ini;
     SECTION *db;
     char *prefix;
+
+    jabool interactive;
 } JAILADMIN;
 
 #include "jailadmin_mount.h"
 #include "schema.h"
 #include "jailadmin_jail.h"
 #include "jailadmin_network.h"
+#include "jailadmin_interactive.h"
 
 #define SUDO(x) do { x = (!getuid() || !geteuid()) ? "" : "/usr/local/bin/sudo"; } while (0)
 

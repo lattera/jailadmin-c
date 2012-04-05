@@ -59,7 +59,7 @@ NETWORK *get_network(JAILADMIN *admin, char *name)
 
     sqldb_free_rows(rows);
 
-    rows = sqlfmt(admin->ctx, buf, BUFSZ, "SELECT * FROM %sjailadmin_bridge_physicals WHERE bridge = '%s'", name);
+    rows = sqlfmt(admin->ctx, buf, BUFSZ, "SELECT * FROM %sjailadmin_bridge_physicals WHERE bridge = '%s'", admin->prefix, name);
     for (row = rows; row != NULL; row = row->next) {
         network->physicals = realloc(network->physicals, ++i * sizeof(char **));
         network->physicals[i-1] = strdup(get_column(row, "device"));
