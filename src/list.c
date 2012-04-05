@@ -157,3 +157,11 @@ void FreeList(LINKEDLIST *list)
     FreeNodes (list, true);
     return;
 }
+
+void PrintList(LINKEDLIST *list)
+{
+    LISTNODE *node;
+
+    for (node = list->head; node != NULL; node = node->next)
+        fprintf(stderr, "%s => %s\n", node->name, node->data);
+}

@@ -16,5 +16,6 @@ typedef struct _jail {
 } JAIL;
 
 JAIL *get_jail(JAILADMIN *, char *);
+void print_jail(JAIL *);
 
 #endif

@@ -21,5 +21,6 @@ LISTNODE *FindNodeByValue(LINKEDLIST *, void *, unsigned long);
 LISTNODE *FindNodeByName(LINKEDLIST *, char *);
 void FreeNodes(LINKEDLIST *, bool);
 void FreeList(LINKEDLIST *);
+void PrintList(LINKEDLIST *);
 
 #endif

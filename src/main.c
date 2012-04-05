@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 {
     JAILADMIN *admin;
     char *inifile;
+    JAIL *jail;
 
     admin = xmalloc(sizeof(JAILADMIN));
 
@@ -50,11 +51,17 @@ int main(int argc, char *argv[])
                        get_section_var(admin->db, "db")
                  );
 
+    if (!(admin->ctx))
+        exit(1);
+
     admin->prefix = get_section_var(admin->db, "prefix");
     if (!(admin->prefix))
         admin->prefix = "";
 
     install_schema(admin);
+
+    jail = get_jail(admin, "tmpjail");
+    print_jail(jail);
 
     close_sql(admin->ctx, true, true);
     free_ini(admin->ini);

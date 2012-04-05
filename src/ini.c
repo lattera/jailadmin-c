@@ -28,6 +28,7 @@ INI *parse_ini(char *filename)
     }
 
     while (!feof(fp)) {
+        memset(buf, 0x00, sizeof(buf));
         if (readf(buf, sizeof(buf), fp) <= 0)
             break;
 
@@ -125,7 +126,8 @@ LISTNODE *add_setting(SECTION *section, char *name, char *value)
     if (!(section))
         return NULL;
 
-    return AddNode(section->settings, name, strdup(value), strlen(value));
+    /* Gotta be +1 to copy the terminating NUL byte */
+    return AddNode(section->settings, name, strdup(value), strlen(value)+1);
 }
 
 SECTION *get_section(INI *ini, char *name)

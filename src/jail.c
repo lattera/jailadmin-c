@@ -23,10 +23,24 @@ JAIL *get_jail(JAILADMIN *admin, char *name)
         return NULL;
 
     jail = xmalloc(sizeof(JAIL));
-    jail->name = get_column(rows, "name");
-    jail->route = get_column(rows, "route");
-    jail->dataset = get_column(rows, "dataset");
+    jail->name = strdup(get_column(rows, "name"));
+    jail->route = strdup(get_column(rows, "route"));
+    jail->dataset = strdup(get_column(rows, "dataset"));
     jail->networks = get_devices(admin, jail);
 
+    sqldb_free_rows(rows);
+
     return jail;
+}
+
+void print_jail(JAIL *jail)
+{
+    unsigned long i;
+
+    fprintf(stderr, "[%s] dataset => %s\n", jail->name, jail->dataset);
+    fprintf(stderr, "[%s] route => %s\n", jail->name, jail->route);
+
+    for (i=0; jail->networks[i] != NULL; i++) {
+        fprintf(stderr, "[%s][net:%s] ip => %s\n", jail->name, jail->networks[i]->device, jail->networks[i]->ip);
+    }
 }

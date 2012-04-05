@@ -27,6 +27,7 @@ SQL_CTX *init_sql(char *host, char *user, char *password, char *db)
     }
     
     if (mysql_real_connect(ctx->db, host, user, password, db, 0, NULL, 0) == NULL) {
+        fprintf(stderr, "mysql_real_connect: %s\n", mysql_error(ctx->db));
         free(ctx);
         return NULL;
     }
