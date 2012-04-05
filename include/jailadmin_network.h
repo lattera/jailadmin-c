@@ -17,5 +17,6 @@ typedef struct _network_device {
 } NETWORK_DEVICE;
 
 NETWORK_DEVICE **get_devices(JAILADMIN *, struct _jail *);
+NETWORK *get_network(JAILADMIN *, char *);
 
 #endif
