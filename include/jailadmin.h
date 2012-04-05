@@ -1,7 +1,7 @@
 #if !defined(_JAILADMIN_H)
 #define _JAILADMIN_H
 
-typedef enum _bool { false=0, true=1 } bool;
+typedef enum _jailadmin_bool { jafalse=0, jatrue=1 } jabool;
 
 #include "misc.h"
 #include "sql.h"

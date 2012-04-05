@@ -17,10 +17,10 @@ typedef struct _jail {
 
 JAIL **get_jails(JAILADMIN *);
 JAIL *get_jail(JAILADMIN *, char *);
-bool is_jail_fully_online(JAIL *);
-bool is_jail_online(JAIL *);
+jabool is_jail_fully_online(JAIL *);
+jabool is_jail_online(JAIL *);
 void print_jail(JAIL *);
-bool start_jail(JAILADMIN *, JAIL *);
-bool stop_jail(JAILADMIN *, JAIL *);
+jabool start_jail(JAILADMIN *, JAIL *);
+jabool stop_jail(JAILADMIN *, JAIL *);
 
 #endif

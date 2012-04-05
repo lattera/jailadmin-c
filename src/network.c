@@ -71,7 +71,7 @@ NETWORK *get_network(JAILADMIN *admin, char *name)
     return network;
 }
 
-bool is_network_online(NETWORK *network)
+jabool is_network_online(NETWORK *network)
 {
     char buf[BUFSZ+1];
     FILE *fp;
@@ -86,17 +86,17 @@ bool is_network_online(NETWORK *network)
         pclose(fp);
     }
 
-    return (strlen(buf) > 0) ? true : false;
+    return (strlen(buf) > 0) ? jatrue : jafalse;
 }
 
-bool bring_network_online(JAILADMIN *admin, NETWORK *network)
+jabool bring_network_online(JAILADMIN *admin, NETWORK *network)
 {
     char *sudo;
     char buf[BUFSZ+1];
     unsigned long i;
 
     if (is_network_online(network))
-        return true;
+        return jatrue;
 
     memset(buf, 0x00, BUFSZ);
     SUDO(sudo);
@@ -117,10 +117,10 @@ bool bring_network_online(JAILADMIN *admin, NETWORK *network)
         system(buf);
     }
 
-    return true;
+    return jatrue;
 }
 
-bool is_network_device_online(NETWORK_DEVICE *device)
+jabool is_network_device_online(NETWORK_DEVICE *device)
 {
     char buf[BUFSZ+1];
     FILE *fp;
@@ -135,22 +135,22 @@ bool is_network_device_online(NETWORK_DEVICE *device)
         pclose(fp);
     }
 
-    return (strlen(buf) > 0) ? true : false;
+    return (strlen(buf) > 0) ? jatrue : jafalse;
 }
 
-bool bring_host_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
+jabool bring_host_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
 {
     char *sudo;
     char buf[BUFSZ+1];
 
-    if (is_network_device_online(device) == true)
-        return true;
+    if (is_network_device_online(device) == jatrue)
+        return jatrue;
 
-    if (is_jail_online(jail) == false)
-        return false;
+    if (is_jail_online(jail) == jafalse)
+        return jafalse;
 
-    if (bring_network_online(admin, device->network) == false)
-        return false;
+    if (bring_network_online(admin, device->network) == jafalse)
+        return jafalse;
 
     memset(buf, 0x00, BUFSZ);
     SUDO(sudo);
@@ -164,16 +164,16 @@ bool bring_host_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
     snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%sa' up 2>&1", sudo, device->device);
     system(buf);
 
-    return true;
+    return jatrue;
 }
 
-bool bring_guest_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
+jabool bring_guest_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
 {
     char *sudo;
     char buf[BUFSZ+1];
 
-    if (bring_host_online(admin, jail, device) == false)
-        return false;
+    if (bring_host_online(admin, jail, device) == jafalse)
+        return jafalse;
 
     memset(buf, 0x00, BUFSZ);
     SUDO(sudo);
@@ -184,16 +184,16 @@ bool bring_guest_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
     snprintf(buf, BUFSZ, "%s /usr/sbin/jexec '%s' ifconfig '%sb' '%s' 2>&1", sudo, jail->name, device->device, device->ip);
     system(buf);
 
-    return true;
+    return jatrue;
 }
 
-bool bring_guest_offline(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
+jabool bring_guest_offline(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
 {
     char *sudo;
     char buf[BUFSZ+1];
 
-    if (is_network_device_online(device) == false)
-        return true;
+    if (is_network_device_online(device) == jafalse)
+        return jatrue;
 
     memset(buf, 0x00, sizeof(buf));
     SUDO(sudo);
@@ -201,5 +201,5 @@ bool bring_guest_offline(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
     snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%sa' destroy", sudo, device->device);
     system(buf);
 
-    return true;
+    return jatrue;
 }

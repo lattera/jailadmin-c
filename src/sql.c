@@ -35,7 +35,7 @@ SQL_CTX *init_sql(char *host, char *user, char *password, char *db)
     return ctx;
 }
 
-void close_sql(SQL_CTX *ctx, bool free_ctx, bool end)
+void close_sql(SQL_CTX *ctx, jabool free_ctx, jabool end)
 {
     if (!(ctx))
         return;

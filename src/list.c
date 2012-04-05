@@ -138,7 +138,7 @@ LISTNODE *FindNodeByName(LINKEDLIST *list, char *name)
 }
 
 /*frees all nodes in a list, including their data*/
-void FreeNodes(LINKEDLIST *list, bool free_list)
+void FreeNodes(LINKEDLIST *list, jabool free_list)
 {
     if (!(list))
         return;
@@ -154,7 +154,7 @@ void FreeNodes(LINKEDLIST *list, bool free_list)
 
 void FreeList(LINKEDLIST *list)
 {
-    FreeNodes (list, true);
+    FreeNodes (list, jatrue);
     return;
 }
 

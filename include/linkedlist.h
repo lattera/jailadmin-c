@@ -19,7 +19,7 @@ void DeleteNode(LINKEDLIST *, LISTNODE *);
 LISTNODE *FindNodeByRef(LINKEDLIST *, void *);
 LISTNODE *FindNodeByValue(LINKEDLIST *, void *, unsigned long);
 LISTNODE *FindNodeByName(LINKEDLIST *, char *);
-void FreeNodes(LINKEDLIST *, bool);
+void FreeNodes(LINKEDLIST *, jabool);
 void FreeList(LINKEDLIST *);
 void PrintList(LINKEDLIST *);
 

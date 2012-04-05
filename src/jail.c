@@ -78,23 +78,23 @@ JAIL *get_jail(JAILADMIN *admin, char *name)
     return jail;
 }
 
-bool is_jail_fully_online(JAIL *jail)
+jabool is_jail_fully_online(JAIL *jail)
 {
     unsigned long i;
-    bool ret;
+    jabool ret;
 
     ret = is_jail_online(jail);
-    if (ret == false)
-        return false;
+    if (ret == jafalse)
+        return jafalse;
 
     for (i=0; jail->networks[i] != NULL; i++)
-        if (is_network_online(jail->networks[i]->network) == false || is_network_device_online(jail->networks[i]) == false)
-            return false;
+        if (is_network_online(jail->networks[i]->network) == jafalse || is_network_device_online(jail->networks[i]) == jafalse)
+            return jafalse;
 
-    return true;
+    return jatrue;
 }
 
-bool is_jail_online(JAIL *jail)
+jabool is_jail_online(JAIL *jail)
 {
     FILE *fp;
     char buf[BUFSZ+1];
@@ -110,10 +110,10 @@ bool is_jail_online(JAIL *jail)
         pclose(fp);
     }
 
-    return (strlen(buf) > 0) ? true : false;
+    return (strlen(buf) > 0) ? jatrue : jafalse;
 }
 
-bool start_jail(JAILADMIN *admin, JAIL *jail)
+jabool start_jail(JAILADMIN *admin, JAIL *jail)
 {
     char *sudo;
     char buf[BUFSZ+1];
@@ -123,7 +123,7 @@ bool start_jail(JAILADMIN *admin, JAIL *jail)
     SUDO(sudo);
 
     if (is_jail_online(jail))
-        return true;
+        return jatrue;
 
     snprintf(buf, BUFSZ, "%s /sbin/mount -t devfs devfs \"%s/dev\"", sudo, jail->path);
     system(buf);
@@ -157,17 +157,17 @@ bool start_jail(JAILADMIN *admin, JAIL *jail)
         system(buf);
     }
 
-    return true;
+    return jatrue;
 }
 
-bool stop_jail(JAILADMIN *admin, JAIL *jail)
+jabool stop_jail(JAILADMIN *admin, JAIL *jail)
 {
     char *sudo;
     char buf[BUFSZ+1];
     unsigned int i;
 
-    if (is_jail_online(jail) == false)
-        return true;
+    if (is_jail_online(jail) == jafalse)
+        return jatrue;
 
     memset(buf, 0x00, BUFSZ);
     SUDO(sudo);
@@ -186,14 +186,14 @@ bool stop_jail(JAILADMIN *admin, JAIL *jail)
     for (i=0; jail->networks[i] != NULL; i++)
         bring_guest_offline(admin, jail, jail->networks[i]);
 
-    return true;
+    return jatrue;
 }
 
 void print_jail(JAIL *jail)
 {
     unsigned long i;
 
-    fprintf(stderr, "[%s] online => %s\n", jail->name, (is_jail_online(jail)) ? "true" : "false");
+    fprintf(stderr, "[%s] online => %s\n", jail->name, (is_jail_online(jail)) ? "jatrue" : "jafalse");
     fprintf(stderr, "[%s] dataset => %s\n", jail->name, jail->dataset);
     fprintf(stderr, "[%s] route => %s\n", jail->name, jail->route);
 

@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <ncurses.h>
+
 #include "jailadmin.h"
 
 void usage(char *name)
@@ -28,7 +30,7 @@ char *getvar(char *envname, int argc, char *argv[], int argi)
     return argv[argi];
 }
 
-int main(int argc, char *argv[])
+JAILADMIN *init_jailadmin(int argc, char *argv[])
 {
     JAILADMIN *admin;
     char *inifile;
@@ -60,11 +62,21 @@ int main(int argc, char *argv[])
 
     install_schema(admin);
 
-    jail = get_jail(admin, "tmpjail");
-    start_jail(admin, jail);
-    stop_jail(admin, jail);
+    return admin;
+}
 
-    close_sql(admin->ctx, true, true);
+int main(int argc, char *argv[])
+{
+    JAILADMIN *admin;
+    admin = init_jailadmin(argc, argv);
+
+    initscr();
+
+    
+
+    endwin();
+
+    close_sql(admin->ctx, jatrue, jatrue);
     free_ini(admin->ini);
 
     return 0;

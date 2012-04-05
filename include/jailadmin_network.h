@@ -18,11 +18,11 @@ typedef struct _network_device {
 
 NETWORK_DEVICE **get_devices(JAILADMIN *, struct _jail *);
 NETWORK *get_network(JAILADMIN *, char *);
-bool is_network_online(NETWORK *);
-bool bring_network_online(JAILADMIN *, NETWORK *);
-bool is_network_device_online(NETWORK_DEVICE *);
-bool bring_host_online(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
-bool bring_guest_online(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
-bool bring_guest_offline(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
+jabool is_network_online(NETWORK *);
+jabool bring_network_online(JAILADMIN *, NETWORK *);
+jabool is_network_device_online(NETWORK_DEVICE *);
+jabool bring_host_online(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
+jabool bring_guest_online(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
+jabool bring_guest_offline(JAILADMIN *, JAIL *, NETWORK_DEVICE *);
 
 #endif

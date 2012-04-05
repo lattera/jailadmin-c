@@ -44,7 +44,7 @@
     ", options VARCHAR(200)" \
     ");"
 
-bool is_schema_installed(JAILADMIN *admin)
+jabool is_schema_installed(JAILADMIN *admin)
 {
     char buf[BUFSZ+1];
     SQL_ROW *rows;
@@ -55,7 +55,7 @@ bool is_schema_installed(JAILADMIN *admin)
 
     sqldb_free_rows(rows);
 
-    return (num > 0) ? true : false;
+    return (num > 0) ? jatrue : jafalse;
 }
 
 int install_schema(JAILADMIN *admin)
