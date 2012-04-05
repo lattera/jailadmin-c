@@ -11,6 +11,27 @@
 
 #define BUFSZ 512
 
+JAIL **get_jails(JAILADMIN *admin)
+{
+    JAIL **jails=NULL;
+    SQL_ROW *rows, *row;
+    unsigned int i=0;
+    char buf[BUFSZ+1];
+
+    rows = sqlfmt(admin->ctx, buf, BUFSZ, "SELECT name FROM %sjailadmin_jails", admin->prefix);
+    for (row = rows; row != NULL; row = row->next) {
+        jails = realloc(jails, ++i * sizeof(JAIL **));
+        jails[i-1] = get_jail(admin, get_column(row, "name"));
+    }
+
+    sqldb_free_rows(rows);
+
+    jails = realloc(jails, ++i * sizeof(JAIL **));
+    jails[i-1] = NULL;
+
+    return jails;
+}
+
 JAIL *get_jail(JAILADMIN *admin, char *name)
 {
     JAIL *jail;
@@ -55,6 +76,22 @@ JAIL *get_jail(JAILADMIN *admin, char *name)
     jail->services[i-1] = NULL;
 
     return jail;
+}
+
+bool is_jail_fully_online(JAIL *jail)
+{
+    unsigned long i;
+    bool ret;
+
+    ret = is_jail_online(jail);
+    if (ret == false)
+        return false;
+
+    for (i=0; jail->networks[i] != NULL; i++)
+        if (is_network_online(jail->networks[i]->network) == false || is_network_device_online(jail->networks[i]) == false)
+            return false;
+
+    return true;
 }
 
 bool is_jail_online(JAIL *jail)

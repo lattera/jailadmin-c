@@ -15,7 +15,9 @@ typedef struct _jail {
     MOUNT **mounts;
 } JAIL;
 
+JAIL **get_jails(JAILADMIN *);
 JAIL *get_jail(JAILADMIN *, char *);
+bool is_jail_fully_online(JAIL *);
 bool is_jail_online(JAIL *);
 void print_jail(JAIL *);
 bool start_jail(JAILADMIN *, JAIL *);

@@ -27,6 +27,8 @@ MOUNT **get_mounts(JAILADMIN *admin, JAIL *jail)
         mounts[i-1]->options = strdup(get_column(row, "options"));
     }
 
+    sqldb_free_rows(rows);
+
     mounts = realloc(mounts, ++i * sizeof(MOUNT **));
     mounts[i-1] = NULL;
 
