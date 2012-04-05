@@ -7,6 +7,7 @@ struct _mount;
 typedef struct _jail {
     char *name;
     char *dataset;
+    char *path;
     char *route;
 
     char **services;
@@ -16,6 +17,8 @@ typedef struct _jail {
 } JAIL;
 
 JAIL *get_jail(JAILADMIN *, char *);
+bool is_jail_online(JAIL *);
 void print_jail(JAIL *);
+bool start_jail(JAILADMIN *, JAIL *);
 
 #endif

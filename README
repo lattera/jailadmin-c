@@ -4,5 +4,8 @@ This project is to help make administration of FreeBSD jails easier. It's writte
 
 Requirements
 ============
+* FreeBSD 9.0-RELEASE or greater
+  - ZFS
+  - VIMAGE (vnet)
+  - CLang
 * MySQL
-* CLang

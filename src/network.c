@@ -70,3 +70,119 @@ NETWORK *get_network(JAILADMIN *admin, char *name)
 
     return network;
 }
+
+bool is_network_online(NETWORK *network)
+{
+    char buf[BUFSZ+1];
+    FILE *fp;
+
+    memset(buf, 0x00, BUFSZ);
+    snprintf(buf, BUFSZ, "/sbin/ifconfig '%s' 2>&1 | grep -v 'does not exist'", network->device);
+    
+    fp = popen(buf, "r");
+    memset(buf, 0x00, BUFSZ);
+    if ((fp)) {
+        readf(buf, BUFSZ, fp);
+        pclose(fp);
+    }
+
+    return (strlen(buf) > 0) ? true : false;
+}
+
+bool bring_network_online(JAILADMIN *admin, NETWORK *network)
+{
+    char *sudo;
+    char buf[BUFSZ+1];
+    unsigned long i;
+
+    if (is_network_online(network))
+        return true;
+
+    memset(buf, 0x00, BUFSZ);
+    SUDO(sudo);
+
+    snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%s' create 2>&1", sudo, network->device);
+    system(buf);
+
+    snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%s' up 2>&1", sudo, network->device);
+    system(buf);
+
+    if (strlen(network->ip)) {
+        snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%s' '%s' 2>&1", sudo, network->device, network->ip);
+        system(buf);
+    }
+
+    for (i=0; network->physicals[i] != NULL; i++) {
+        snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%s' addm '%s' 2>&1", sudo, network->device, network->physicals[i]);
+        system(buf);
+    }
+
+    return true;
+}
+
+bool is_network_device_online(NETWORK_DEVICE *device)
+{
+    char buf[BUFSZ+1];
+    FILE *fp;
+
+    memset(buf, 0x00, BUFSZ);
+    snprintf(buf, BUFSZ, "/sbin/ifconfig '%sa' 2>&1 | grep -v 'does not exist'", device->device);
+
+    fp = popen(buf, "r");
+    memset(buf, 0x00, BUFSZ);
+    if ((fp)) {
+        readf(buf, BUFSZ, fp);
+        pclose(fp);
+    }
+
+    return (strlen(buf) > 0) ? true : false;
+}
+
+bool bring_host_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
+{
+    char *sudo;
+    char buf[BUFSZ+1];
+
+    if (is_network_device_online(device) == true)
+        return true;
+
+    if (is_jail_online(jail) == false)
+        return false;
+
+    if (bring_network_online(admin, device->network) == false)
+        return false;
+
+    memset(buf, 0x00, BUFSZ);
+    SUDO(sudo);
+
+    snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%s' create 2>&1", sudo, device->device);
+    system(buf);
+
+    snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%s' addm '%sa' 2>&1", sudo, device->network->device, device->device);
+    system(buf);
+
+    snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%sa' up 2>&1", sudo, device->device);
+    system(buf);
+
+    return true;
+}
+
+bool bring_guest_online(JAILADMIN *admin, JAIL *jail, NETWORK_DEVICE *device)
+{
+    char *sudo;
+    char buf[BUFSZ+1];
+
+    if (bring_host_online(admin, jail, device) == false)
+        return false;
+
+    memset(buf, 0x00, BUFSZ);
+    SUDO(sudo);
+
+    snprintf(buf, BUFSZ, "%s /sbin/ifconfig '%sb' vnet '%s' 2>&1", sudo, device->device, jail->name);
+    system(buf);
+
+    snprintf(buf, BUFSZ, "%s /usr/sbin/jexec '%s' ifconfig '%sb' '%s' 2>&1", sudo, jail->name, device->device, device->ip);
+    system(buf);
+
+    return true;
+}

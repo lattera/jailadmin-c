@@ -19,4 +19,6 @@ typedef struct _jailadmin {
 #include "jailadmin_jail.h"
 #include "jailadmin_network.h"
 
+#define SUDO(x) do { x = (!getuid() || !geteuid()) ? "" : "/usr/local/bin/sudo"; } while (0)
+
 #endif
