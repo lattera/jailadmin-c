@@ -13,7 +13,7 @@ int num_args(char **cmd)
     int numargs;
     for (numargs=0; cmd[numargs] != NULL; numargs++)
         ;
-    return numargs+1;
+    return numargs;
 }
 
 CALLBACK_RETURN status_callback(JAILADMIN *admin, char **cmd, void *scr)
@@ -25,8 +25,9 @@ CALLBACK_RETURN status_callback(JAILADMIN *admin, char **cmd, void *scr)
         return CONT_PROC;
 
     numargs = num_args(cmd);
+    optreset = 1;
+    optind = 1;
     while ((ch = getopt(numargs, cmd, "i")) != -1) {
-        wprintw(scr, "getopt returned: %c\n", (char)ch);
         switch ((char)ch) {
             case 'i':
                 infinite=jatrue;
@@ -52,8 +53,8 @@ void print_status(JAILADMIN *admin, void *scr, jabool infinite)
 
     jails = get_jails(admin);
     do {
-//        wclear(scr);
-//        wmove(scr, 0, 0);
+        wclear(scr);
+        wmove(scr, 0, 0);
         for (i=0; jails[i] != NULL; i++) {
             if (has_colors()) {
                 wprintw(scr, "[");
@@ -64,14 +65,11 @@ void print_status(JAILADMIN *admin, void *scr, jabool infinite)
             } else {
                 wprintw(scr, "[%s] => %s\n", jails[i]->name, (is_jail_fully_online(jails[i])) ? "online" : "offline");
             }
+
+            wrefresh(scr);
         }
 
-        if (infinite == jatrue) {
-            wprintw(scr, "Refreshing in 10 seconds\n");
+        if (infinite == jatrue)
             sleep(10);
-        }
-
-        refresh();
-
     } while (infinite == jatrue);
 }
