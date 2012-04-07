@@ -8,14 +8,6 @@
 
 void print_status(JAILADMIN *, jabool);
 
-int num_args(char **cmd)
-{
-    int numargs;
-    for (numargs=0; cmd[numargs] != NULL; numargs++)
-        ;
-    return numargs;
-}
-
 CALLBACK_RETURN status_callback(JAILADMIN *admin, char **cmd)
 {
     jabool infinite=jafalse;
@@ -53,20 +45,20 @@ void print_status(JAILADMIN *admin, jabool infinite)
 
     jails = get_jails(admin);
     do {
-        wclear(admin->windows[0]);
-        wmove(admin->windows[0], 0, 0);
+        wclear(admin->windows[MAINWIN]);
+        wmove(admin->windows[MAINWIN], 0, 0);
         for (i=0; jails[i] != NULL; i++) {
             if (has_colors()) {
-                wprintw(admin->windows[0], "[");
-                wattron(admin->windows[0], is_jail_fully_online(jails[i]) ? COLOR_PAIR(2) : COLOR_PAIR(1));
-                wprintw(admin->windows[0], "%s", jails[i]->name);
-                wattroff(admin->windows[0], is_jail_fully_online(jails[i]) ? COLOR_PAIR(2) : COLOR_PAIR(1));
-                wprintw(admin->windows[0], "]\n");
+                wprintw(admin->windows[MAINWIN], "[");
+                wattron(admin->windows[MAINWIN], is_jail_fully_online(jails[i]) ? COLOR_PAIR(2) : COLOR_PAIR(1));
+                wprintw(admin->windows[MAINWIN], "%s", jails[i]->name);
+                wattroff(admin->windows[MAINWIN], is_jail_fully_online(jails[i]) ? COLOR_PAIR(2) : COLOR_PAIR(1));
+                wprintw(admin->windows[MAINWIN], "]\n");
             } else {
-                wprintw(admin->windows[0], "[%s] => %s\n", jails[i]->name, (is_jail_fully_online(jails[i])) ? "online" : "offline");
+                wprintw(admin->windows[MAINWIN], "[%s] => %s\n", jails[i]->name, (is_jail_fully_online(jails[i])) ? "online" : "offline");
             }
 
-            wrefresh(admin->windows[0]);
+            wrefresh(admin->windows[MAINWIN]);
         }
 
         if (infinite == jatrue)

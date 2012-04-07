@@ -143,9 +143,9 @@ jabool start_jail(JAILADMIN *admin, JAIL *jail)
 
     for (i=0; jail->mounts[i] != NULL; i++) {
         snprintf(buf, BUFSZ, "%s /sbin/mount ", sudo);
-        if (strlen(jail->mounts[i]->driver))
+        if ((jail->mounts[i]->driver) && strlen(jail->mounts[i]->driver))
             snprintf(buf+strlen(buf), BUFSZ-strlen(buf), "-t '%s' ", jail->mounts[i]->driver);
-        if (strlen(jail->mounts[i]->options))
+        if ((jail->mounts[i]->options) && strlen(jail->mounts[i]->options))
             snprintf(buf+strlen(buf), BUFSZ-strlen(buf), "-o %s ", jail->mounts[i]->options);
 
         snprintf(buf+strlen(buf), BUFSZ-strlen(buf), "'%s' '%s/%s'", jail->mounts[i]->source, jail->path, jail->mounts[i]->target);

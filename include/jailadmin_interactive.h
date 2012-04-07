@@ -10,6 +10,7 @@ typedef enum _interactive_callback_return { INVALID=0, CONT_PROC=1, TERM_PROC=2 
 /* Arguments: pointer to JAILADMIN object, pointer to parsed command, pointer to ncurses window */
 typedef CALLBACK_RETURN (*interactive_callback)(JAILADMIN *, char **);
 
+int num_args(char **);
 void interactive(JAILADMIN *);
 
 #endif

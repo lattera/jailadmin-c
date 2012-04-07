@@ -14,6 +14,7 @@
 #define NUMPLUGINS 1
 
 CALLBACK_RETURN status_callback(JAILADMIN *, char **);
+CALLBACK_RETURN jail_cmd(JAILADMIN *, char **);
 
 typedef struct _interactive_plugin {
     char *name;
@@ -24,6 +25,10 @@ INTERACTIVE_PLUGIN plugins[] = {
     {
         "status",
         status_callback
+    },
+    {
+        "jail",
+        jail_cmd
     },
     {
         NULL,
@@ -38,6 +43,16 @@ void sighandler(int signo)
             endwin();
             exit(0);
     }
+}
+
+int num_args(char **cmd)
+{
+    unsigned long i;
+
+    for (i=0; cmd[i] != NULL; i++)
+        ;
+
+    return i;
 }
 
 void create_windows(JAILADMIN *admin)
@@ -118,9 +133,9 @@ void interactive(JAILADMIN *admin)
     create_windows(admin);
 
     while (1) {
-        readcmd(admin->windows[1], cmd, BUFSZ);
-        wclear(admin->windows[1]);
-        wmove(admin->windows[1], 0, 0);
+        readcmd(admin->windows[INPUTWIN], cmd, BUFSZ);
+        wclear(admin->windows[INPUTWIN]);
+        wmove(admin->windows[INPUTWIN], 0, 0);
 
         if (!strlen(cmd) || cmd[0] == '#')
             continue;
@@ -129,11 +144,6 @@ void interactive(JAILADMIN *admin)
             break;
 
         parsed = parse_cmd(cmd);
-        for (i=0; parsed[i] != NULL; i++) {
-            printw("parsed[%d]: %s\n", i, parsed[i]);
-            refresh();
-        }
-
         for (i=0; plugins[i].name != NULL; i++) {
             if (plugins[i].callback(admin, parsed) == TERM_PROC)
                 break;
