@@ -23,8 +23,12 @@ MOUNT **get_mounts(JAILADMIN *admin, JAIL *jail)
 
         mounts[i-1]->target = strdup(get_column(row, "target"));
         mounts[i-1]->source = strdup(get_column(row, "source"));
-        mounts[i-1]->driver = strdup(get_column(row, "driver"));
-        mounts[i-1]->options = strdup(get_column(row, "options"));
+
+        if (get_column(row, "source") != NULL)
+            mounts[i-1]->driver = strdup(get_column(row, "driver"));
+
+        if (get_column(row, "options") != NULL)
+            mounts[i-1]->options = strdup(get_column(row, "options"));
     }
 
     sqldb_free_rows(rows);

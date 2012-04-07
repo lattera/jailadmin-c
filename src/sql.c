@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-
 #include "jailadmin.h"
-#include "sql.h"
-#include "misc.h"
 
 SQL_CTX *init_sql(char *host, char *user, char *password, char *db)
 {

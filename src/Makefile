@@ -1,5 +1,5 @@
 TARGET=jailadmin
-CC=gcc
+CC=clang
 CFLAGS=-I../include -I/usr/local/include -DDEBUG -g
 LDFLAGS=-Wl,-L/usr/local/lib/mysql -lmysqlclient -lncurses
 SRCS=main.c sql.c list.c misc.c ini.c schema.c jail.c network.c mount.c interactive.c interactive/status.c

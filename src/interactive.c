@@ -13,7 +13,7 @@
 #define BUFSZ 512
 #define NUMPLUGINS 1
 
-CALLBACK_RETURN status_callback(JAILADMIN *, char **, void *);
+CALLBACK_RETURN status_callback(JAILADMIN *, char **);
 
 typedef struct _interactive_plugin {
     char *name;
@@ -38,6 +38,19 @@ void sighandler(int signo)
             endwin();
             exit(0);
     }
+}
+
+void create_windows(JAILADMIN *admin)
+{
+    WINDOW *mainwin;
+    WINDOW *inputwin;
+
+    mainwin = newwin(LINES-1, COLS, 0, 0);
+    inputwin = newwin(1, COLS, LINES-1, 0);
+
+    admin->windows = xmalloc(NUMWINS * sizeof(WINDOW **));
+    admin->windows[MAINWIN] = mainwin;
+    admin->windows[INPUTWIN] = inputwin;
 }
 
 size_t readcmd(void *scr, char *buf, size_t bufsz) {
@@ -102,9 +115,13 @@ void interactive(JAILADMIN *admin)
     signal(SIGINT, sighandler);
 
     initscr();
+    create_windows(admin);
 
     while (1) {
-        readcmd(stdscr, cmd, BUFSZ);
+        readcmd(admin->windows[1], cmd, BUFSZ);
+        wclear(admin->windows[1]);
+        wmove(admin->windows[1], 0, 0);
+
         if (!strlen(cmd) || cmd[0] == '#')
             continue;
 
@@ -118,7 +135,7 @@ void interactive(JAILADMIN *admin)
         }
 
         for (i=0; plugins[i].name != NULL; i++) {
-            if (plugins[i].callback(admin, parsed, stdscr) == TERM_PROC)
+            if (plugins[i].callback(admin, parsed) == TERM_PROC)
                 break;
         }
     }

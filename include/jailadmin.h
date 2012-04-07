@@ -3,6 +3,12 @@
 
 typedef enum _jailadmin_bool { jafalse=0, jatrue=1 } jabool;
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <ncurses.h>
+
 #include "misc.h"
 #include "sql.h"
 #include "linkedlist.h"
@@ -13,6 +19,7 @@ typedef struct _jailadmin {
     INI *ini;
     SECTION *db;
     char *prefix;
+    WINDOW **windows;
 
     jabool interactive;
 } JAILADMIN;
